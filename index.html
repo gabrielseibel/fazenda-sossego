@@ -11,7 +11,7 @@
 :root{--cream:#f6ecd0;--cream2:#e9d9ae;--ink:#33241a;--wood:#8a5a36;--wood2:#6b4226;--green:#4c9a3c;--green2:#2f6b2a;--gold:#f2c230;--red:#d9482b;--blue:#3d7fd9}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;background:#2d5a27;font-family:'Pixelify Sans','Courier New',monospace;color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:none}
-canvas{position:fixed;left:0;top:0;display:block}
+#game,#fx{position:fixed;left:0;top:0;display:block}
 #game{image-rendering:pixelated;image-rendering:crisp-edges}
 #fx{pointer-events:none}
 .px{border:3px solid var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.35);border-radius:6px}
@@ -61,6 +61,36 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
 #title .btn{font-size:24px;padding:10px 26px}
 #title .btn.w{font-size:15px;padding:6px 14px}
 .help{background:rgba(51,36,26,.8);color:#fff3d6;border-radius:8px;padding:9px 12px;font-size:14px;line-height:1.4}
+#ctx{position:fixed;left:0;right:0;margin:auto;width:max-content;max-width:94vw;bottom:calc(80px + env(safe-area-inset-bottom));background:rgba(51,36,26,.88);color:#fff3d6;font-size:13px;font-weight:600;padding:4px 10px;border-radius:6px;border:2px solid #1c120b;z-index:4;pointer-events:none;display:none;text-align:center}
+#ctx b{color:var(--gold)}
+#coach{position:fixed;left:0;right:0;margin:auto;bottom:calc(114px + env(safe-area-inset-bottom));width:min(520px,94vw);background:var(--cream);z-index:6;display:none;gap:10px;padding:8px;align-items:flex-start}
+#coach.show{display:flex;animation:tin .3s ease-out}
+#coach img{width:60px;height:60px;image-rendering:pixelated;border:3px solid var(--ink);border-radius:6px;flex:none}
+#coach .who{font-weight:700;font-size:12px;color:var(--wood2);letter-spacing:.5px}
+#coach .say{font-size:15px;line-height:1.3;min-height:40px;font-weight:600}
+#coach .row{display:flex;align-items:center;gap:8px;margin-top:5px;min-height:30px}
+.prog{flex:1;height:10px;background:var(--cream2);border:2px solid var(--ink);border-radius:5px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--green);width:0;transition:width .25s}
+#cnum{font-weight:700;font-size:13px}
+#coach .btn{font-size:14px;margin-left:auto}
+.skip{background:none;border:0;font-size:12px;text-decoration:underline;opacity:.75;padding:6px 2px}
+.pulse{animation:pulse .6s infinite alternate}
+@keyframes pulse{to{box-shadow:0 0 0 4px #fff,0 0 0 8px var(--gold);transform:translateY(-4px)}}
+.gfoot{display:flex;align-items:center;gap:8px;padding:8px;border-top:4px solid var(--ink)}
+.dots{flex:1;text-align:center;font-size:14px;font-weight:700}
+.cyc{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.card{background:#fffaf0;border:3px solid var(--ink);border-radius:6px;padding:6px 4px;text-align:center;font-size:12px;width:104px;line-height:1.2;overflow-wrap:anywhere}
+.card img{width:48px;height:48px;image-rendering:pixelated;border:2px solid var(--ink);display:block;margin:0 auto 4px;background:#b98f3c}
+.card.v img{width:92px;height:96px;border:0;background:none}
+.card b{display:block;font-size:12px}
+.card em{display:block;font-style:normal;background:var(--gold);border-radius:4px;margin-top:4px;font-weight:700;font-size:11px;padding:2px 1px}
+.gp{font-size:14px;line-height:1.4;margin:0}
+.gp b{color:var(--wood2)}
+.ct{width:100%;border-collapse:collapse;font-size:13px;background:#fffaf0;border:3px solid var(--ink)}
+.ct td,.ct th{padding:5px 6px;text-align:left;border-bottom:2px solid var(--cream2)}
+.ct th{background:var(--cream2);font-size:12px}
+.tip{background:#fffaf0;border:3px solid var(--ink);border-left:10px solid var(--green);border-radius:6px;padding:7px 9px;font-size:14px;line-height:1.35}
+@media (max-height:520px){#coach{bottom:70px}#coach img{width:40px;height:40px}#coach .say{font-size:13px;min-height:0}#ctx{display:none!important}}
 @media (max-width:520px){.chip{font-size:14px;padding:4px 7px}.btn{font-size:14px;padding:5px 8px}#mission{top:88px;font-size:13px}.tool{width:54px;height:54px}}
 @media (max-height:420px){#mission{top:50px}.tool{width:48px;height:48px}.tool span{font-size:18px}}
 </style>
@@ -78,9 +108,12 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
   <button class="btn" id="bShop">🛒 Loja</button>
   <button class="btn w" id="bZoom">🔍</button>
   <button class="btn w" id="bSnd">🔊</button>
+  <button class="btn w" id="bGuide">📖</button>
 </div>
 <div id="mission"><span id="mtxt"></span><div id="mbar"><i></i></div></div>
 <div id="toasts"></div>
+<div id="ctx"></div>
+<div id="coach" class="px"><img id="zeface" alt=""><div style="flex:1;min-width:0"><div class="who">SEU ZÉ · PASSO <span id="cstep"></span></div><div class="say" id="csay"></div><div class="row"><div class="prog" id="cprog"><i></i></div><span id="cnum"></span><button class="skip" id="cskip">pular tutorial</button><button class="btn g" id="cnext">Próximo ▶</button></div></div></div>
 <div id="tools">
   <button class="tool on" data-t="auto"><span>✨</span>AUTO</button>
   <button class="tool" data-t="plow"><span>🟤</span>ARAR</button>
@@ -99,8 +132,15 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
   <div class="logo">FAZENDA<span>SOSSEGO</span></div>
   <div class="sub">Are, plante, colha — e veja suas máquinas trabalharem sozinhas.</div>
   <button class="btn g" id="bPlay">▶ Jogar</button>
+  <button class="btn w" id="bHow">📖 Como jogar</button>
   <button class="btn w" id="bNew" style="display:none">Novo jogo</button>
-  <div class="help"><b>PC:</b> WASD ou setas para dirigir · 1–5 troca a ferramenta · L abre a loja<br><b>Celular:</b> arraste o dedo na tela para dirigir o trator</div>
+  <div class="help"><b>PC:</b> WASD ou setas para dirigir · 1–5 troca a ferramenta · L loja · G guia<br><b>Celular:</b> arraste o dedo na tela para dirigir o trator</div>
+</div></div>
+
+<div class="ovl" id="guide"><div class="panel">
+  <div class="phead">📖 <span id="gtitle" style="margin-left:8px"></span><button class="x" id="gx">X</button></div>
+  <div class="pbody" id="gbody"></div>
+  <div class="gfoot"><button class="btn w" id="gprev">◀ Voltar</button><div class="dots" id="gdots"></div><button class="btn" id="gnext">Avançar ▶</button></div>
 </div></div>
 
 <script>
@@ -150,8 +190,8 @@ const MISSIONS=[
 const kind=new Uint8Array(N),fid=new Int8Array(N).fill(-1),st=new Uint8Array(N),cr=new Uint8Array(N),weed=new Uint8Array(N),spr=new Uint8Array(N),stg=new Uint8Array(N),g=new Float32Array(N);
 const ftiles=[];
 let S;
-function newState(){return{v:1,money:0,earned:0,stats:{plowed:0,seeded:0,sprayed:0,harvested:0,sold:0},stock:[0,0,0,0,0],day:1,tod:.3,owned:[1,0,0,0,0,0,0,0],fcrop:[0,0,0,0,0,0,0,0],crops:[1,0,0,0,0],up:{pspd:0,pwid:0,aspd:0,awid:0,silo:0,irr:0,auto:0},machines:[],mi:0,pm:[1,1,1,1,1],sound:1}}
-const P={x:36.5*T,y:29*T,a:0,tool:'auto',vis:'plow',hacc:0,hc:0,spd:0};
+function newState(){return{v:1,money:0,earned:0,stats:{plowed:0,seeded:0,sprayed:0,harvested:0,sold:0},stock:[0,0,0,0,0],day:1,tod:.3,owned:[1,0,0,0,0,0,0,0],fcrop:[0,0,0,0,0,0,0,0],crops:[1,0,0,0,0],up:{pspd:0,pwid:0,aspd:0,awid:0,silo:0,irr:0,auto:0},machines:[],mi:0,pm:[1,1,1,1,1],sound:1,tut:0}}
+const P={x:36.5*T,y:29*T,a:0,tool:'auto',vis:'plow',hacc:0,hc:0,spd:0,moved:0};
 let M=[];let rain=0,started=false;
 const cap=()=>300*Math.pow(2,S.up.silo);
 const total=()=>S.stock[0]+S.stock[1]+S.stock[2]+S.stock[3]+S.stock[4];
@@ -368,7 +408,7 @@ function updPlayer(dt){
   let da=Math.atan2(iy,ix)-P.a;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
   P.a+=clamp(da,-6*dt,6*dt);const sp=62*(1+.12*S.up.pspd)*mag*Math.max(.25,Math.cos(da));
   const nx=clamp(P.x+Math.cos(P.a)*sp*dt,10,WW-10),ny=clamp(P.y+Math.sin(P.a)*sp*dt,10,WH-10);
-  if(kind[((ny/T)|0)*MW+((nx/T)|0)]!==3){P.x=nx;P.y=ny}
+  if(kind[((ny/T)|0)*MW+((nx/T)|0)]!==3){P.x=nx;P.y=ny;P.moved+=sp*dt}
   if(Math.random()<.25)parts.push({x:P.x-Math.cos(P.a)*10,y:P.y-Math.sin(P.a)*10,vx:0,vy:-5,l:.4,c:'rgba(120,100,70,.6)'});
  }
  if(P.tool!=='auto')P.vis=P.tool;
@@ -403,10 +443,10 @@ const KEY='fazenda-sossego-v1';
 function save(){try{const n=ftiles.length,a=new Array(n),b=new Array(n),c=new Array(n),d=new Array(n);
  for(let k=0;k<n;k++){const i=ftiles[k];a[k]=st[i];b[k]=cr[i];c[k]=weed[i]|spr[i]<<1;d[k]=Math.round(g[i]*100)}
  localStorage.setItem(KEY,JSON.stringify({S,t:[a,b,c,d],p:[P.x|0,P.y|0]}))}catch(e){}}
-function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(!j||!j.S||j.S.v!==1)return false;S=Object.assign(newState(),j.S);S.up=Object.assign(newState().up,j.S.up);
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(!j||!j.S||j.S.v!==1)return false;S=Object.assign(newState(),j.S);if(j.S.tut===undefined)S.tut=S.mi>=6?99:0;S.up=Object.assign(newState().up,j.S.up);
  const[a,b,c,d]=j.t;for(let k=0;k<ftiles.length;k++){const i=ftiles[k];st[i]=a[k]||0;cr[i]=b[k]||0;weed[i]=c[k]&1;spr[i]=c[k]>>1&1;g[i]=(d[k]||0)/100;stg[i]=Math.min(3,g[i]*4|0)}
  if(j.p){P.x=j.p[0];P.y=j.p[1]}return true}catch(e){return false}}
-function reset(){S=newState();for(const i of ftiles){st[i]=cr[i]=weed[i]=spr[i]=stg[i]=0;g[i]=0}P.x=36.5*T;P.y=29*T;P.a=0;for(const k in claims)delete claims[k];spawnMachines();drawWorld();hud()}
+function reset(){S=newState();for(const i of ftiles){st[i]=cr[i]=weed[i]=spr[i]=stg[i]=0;g[i]=0}P.x=36.5*T;P.y=29*T;P.a=0;P.moved=0;for(const k in claims)delete claims[k];spawnMachines();drawWorld();hud()}
 
 /* ---------- HUD e loja ---------- */
 function hud(){
@@ -415,6 +455,7 @@ function hud(){
  const h=S.tod*24,hh=h|0,mm=((h-hh)*6|0)*10;$('#cDay').innerHTML=(rain>0?'🌧️':S.tod>.25&&S.tod<.78?'☀️':'🌙')+' Dia '+S.day+' <small>'+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+'</small>';
  let v=0;for(let i=0;i<5;i++)v+=Math.floor(S.stock[i])*price(i);$('#bSell').textContent='💰 Vender $'+fmt(v);$('#bSell').disabled=v<1;
  $('#bSnd').textContent=S.sound?'🔊':'🔇';
+ const ms=$('#mission');ms.style.top=($('#hud').offsetHeight+2)+'px';ms.style.display=started&&S.tut>=TUT.length?'':'none';ctxChip();fieldPct();
  if(S.mi<MISSIONS.length){const m=MISSIONS[S.mi],cur=Math.min(m.n,mval(m.k));$('#mtxt').innerHTML='🎯 '+m.t+' <b>'+fmt(cur)+'/'+fmt(m.n)+'</b> · prêmio $'+fmt(m.r);$('#mbar i').style.width=(cur/m.n*100)+'%'}
  else{$('#mtxt').innerHTML='🌟 <b>Fazenda lendária!</b> Continue crescendo.';$('#mbar i').style.width='100%'}
 }
@@ -457,6 +498,90 @@ $('#bSnd').onclick=()=>{S.sound=S.sound?0:1;hud()};
 document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
 function setTool(t){P.tool=t;if(t!=='auto')P.vis=t;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('on',b.dataset.t===t));sfx.tick(440)}
 
+/* ---------- contexto do lote ---------- */
+const TOOLN={plow:'ARAR',seed:'PLANTAR',spray:'PULVERIZAR',harv:'COLHER'};
+function ctxChip(){
+ const el=$('#ctx');let h='';
+ if(started){const i=((P.y/T)|0)*MW+((P.x/T)|0),f=fid[i];
+  if(f>=0){const C=CROPS[S.fcrop[f]],n='Campo '+(f+1)+' · ';
+   if(!S.owned[f])h=n+'à venda por <b>$'+fmt(FIELDS[f].price)+'</b> na Loja';
+   else{const s=st[i];h=n+(s===0?'terra crua → <b>ARAR</b>':s===4?'palhada → <b>ARAR</b> para replantar':s===1?'terra arada → <b>PLANTAR</b> '+C.ico:
+    s===3?CROPS[cr[i]].ico+' madura → <b>COLHER</b>':weed[i]?'🌿 erva daninha! → <b>PULVERIZAR</b>':CROPS[cr[i]].ico+' crescendo '+Math.round(g[i]*100)+'%'+(spr[i]?' · protegida ✓':' → <b>PULVERIZAR</b> (+25%)'))}}}
+ if(h){el.innerHTML=h;el.style.display='block'}else el.style.display='none';
+}
+const fpct=new Array(8).fill(0);
+function fieldPct(){const a=new Array(8).fill(0);for(const i of ftiles)if(st[i]===3)a[fid[i]]++;FIELDS.forEach((F,f)=>fpct[f]=Math.round(a[f]/(F.w*F.h)*100))}
+
+/* ---------- Seu Zé: tutorial ---------- */
+const FINE=matchMedia('(pointer:fine)').matches;
+const inField=f=>{const F=FIELDS[f],x=P.x/T,y=P.y/T;return x>=F.x&&x<F.x+F.w&&y>=F.y&&y<F.y+F.h};
+const TUT=[
+ {s:'Opa! Eu sou o Seu Zé. Bem-vindo à Fazenda Sossego! Vou te mostrar como tudo funciona por aqui.',next:1},
+ {s:FINE?'Use WASD ou as setas do teclado para dirigir o trator. Dê uma voltinha pelo pátio!':'Arraste o dedo em qualquer lugar da tela para dirigir o trator. Dê uma voltinha pelo pátio!',p:()=>[P.moved,90]},
+ {s:'Agora siga a seta dourada até o Campo 1, aquela terra cercada à esquerda.',tgt:0,p:()=>[inField(0)?1:0,1]},
+ {s:'Essa terra está crua. No modo AUTO o trator escolhe a ferramenta sozinho: é só passar por cima. Are 30 lotes!',hl:'.tool[data-t=auto]',tgt:0,p:()=>[S.stats.plowed,30]},
+ {s:'A terra arada fica escura. Passe de novo por cima dela e plante 30 lotes de trigo.',tgt:0,p:()=>[S.stats.seeded,30]},
+ {s:'Brotou! Passe mais uma vez para pulverizar: tira as ervas daninhas e rende +25% na colheita.',tgt:0,p:()=>[S.stats.sprayed,20]},
+ {s:'Agora é esperar o trigo ficar dourado, menos de um minuto. Quando amadurecer, passe por cima e colha 40 lotes.',tgt:0,p:()=>[S.stats.harvested,40]},
+ {s:'A colheita foi para o silo. Toque em VENDER, lá em cima, para transformar tudo em dinheiro!',hl:'#bSell',p:()=>[S.stats.sold,1]},
+ {s:'Abra a LOJA e compre uma máquina autônoma: ela trabalha sozinha, dia e noite. Se faltar dinheiro, colha e venda mais.',hl:'#bShop',p:()=>[S.machines.length,1]},
+ {s:'Pronto, você já é fazendeiro! Compre campos, libere sementes e veja a fazenda crescer. Na dúvida, abra o GUIA 📖.',hl:'#bGuide',next:1}];
+let cStep=-1,cTxt='',cPos=0;
+const clearHL=()=>document.querySelectorAll('.pulse').forEach(e=>e.classList.remove('pulse'));
+function coach(dt){
+ const active=started&&S.tut<TUT.length;
+ $('#coach').classList.toggle('show',active&&!$('#shop').classList.contains('show')&&!$('#guide').classList.contains('show'));
+ if(!active){if(cStep!==-2){cStep=-2;clearHL()}return}
+ const t=TUT[S.tut];
+ if(cStep!==S.tut){cStep=S.tut;cTxt=t.s;cPos=0;clearHL();if(t.hl)$(t.hl).classList.add('pulse');$('#cstep').textContent=(S.tut+1)+'/'+TUT.length;
+  $('#cnext').style.display=t.next?'':'none';$('#cprog').style.display=$('#cnum').style.display=t.p&&t.p()[1]>1?'':'none';$('#cprog i').style.width='0';$('#cnext').textContent=S.tut===TUT.length-1?'Bora! ✓':'Próximo ▶'}
+ if(cPos<cTxt.length){cPos=Math.min(cTxt.length,cPos+dt*50);$('#csay').textContent=cTxt.slice(0,cPos|0)}
+ if(t.p){const[c,n]=t.p();$('#cprog i').style.width=Math.min(100,c/n*100)+'%';$('#cnum').textContent=n>1&&n<=60?Math.min(n,Math.floor(c))+'/'+n:'';if(c>=n){S.tut++;sfx.win()}}
+}
+$('#cnext').onclick=()=>{if(cPos<cTxt.length){cPos=cTxt.length;$('#csay').textContent=cTxt;return}S.tut++;sfx.tick(660);if(S.tut>=TUT.length){toast('🎓 Tutorial concluído! Agora siga as missões 🎯');save()}};
+$('#cskip').onclick=()=>{S.tut=99;toast('Tutorial pulado. O guia 📖 fica sempre no topo.');save()};
+function objective(){if(!started||S.tut>=TUT.length)return null;const t=TUT[S.tut];if(t.tgt===undefined||inField(t.tgt))return null;const F=FIELDS[t.tgt];return[(F.x+F.w/2)*T,(F.y+F.h/2)*T]}
+$('#zeface').src=mk(16,16,c=>{dot(c,0,0,'#8fd46a',16,16);dot(c,3,13,'#3d7fd9',10,3);dot(c,5,13,'#2b5fa8',1,3);dot(c,10,13,'#2b5fa8',1,3);
+ dot(c,5,6,'#f0b98a',6,6);dot(c,5,10,'#6b4226',6,3);dot(c,7,10,'#f0b98a',2,1);dot(c,7,11,'#b5352b',2,1);dot(c,6,8,'#33241a');dot(c,9,8,'#33241a');dot(c,4,7,'#6b4226',1,3);dot(c,11,7,'#6b4226',1,3);
+ dot(c,2,5,'#d9a93a',12,1);dot(c,1,6,'#c9961a',14,1);dot(c,5,2,'#f0c75a',6,3);dot(c,5,4,'#b5352b',6,1);dot(c,6,2,'#fbe08a',2,1)}).toDataURL();
+
+/* ---------- almanaque (guia) ---------- */
+const turl=k=>TILES[k][0].toDataURL();
+const vurl=(type,tool,col,hat)=>mk(46,48,c=>c.drawImage(vsprite(type,tool,3,col,hat),0,0)).toDataURL();
+const card=(img,n,a,v)=>'<div class="card'+(v?' v':'')+'"><img src="'+img+'" alt=""><b>'+n+'</b>'+(a?'<em>'+a+'</em>':'')+'</div>';
+const GUIDE=[
+ ['O ciclo da lavoura',()=>'<p class="gp">Cada lote de terra passa por 5 fases. Feche o ciclo, venda a colheita e comece de novo.</p><div class="cyc">'+
+  card(turl('raw'),'1 · Terra crua','ARAR')+card(turl('plow'),'2 · Arada','PLANTAR')+card(turl('g01'),'3 · Crescendo','PULVERIZAR')+card(turl('m0'),'4 · Madura','COLHER')+card(turl('stub'),'5 · Palhada','ARAR de novo')+'</div>'+
+  '<div class="cyc">'+card(mk(16,16,c=>{c.drawImage(TILES.g02[0],0,0);c.drawImage(TILES.weed[0],0,0)}).toDataURL(),'Erva daninha','colheita ÷ 2')+card(mk(16,16,c=>{c.drawImage(TILES.g02[0],0,0);c.drawImage(TILES.dew[0],0,0);c.drawImage(TILES.dew[1],0,0)}).toDataURL(),'Pulverizada','colheita +25%')+'</div>'+
+  '<p class="gp">A <b>erva daninha</b> (tufos roxos) aparece em lotes que ainda não foram pulverizados e corta a colheita daquele lote pela metade. Pulverizar remove a erva e protege o lote até a colheita.</p>'],
+ ['Seu trator',()=>'<p class="gp">'+(FINE?'Dirija com <b>WASD</b> ou as <b>setas</b>. Teclas <b>1 a 5</b> trocam a ferramenta.':'<b>Arraste o dedo</b> em qualquer ponto da tela: aparece um controle e o trator segue a direção.')+' A ferramenta trabalha sozinha em tudo o que estiver embaixo dela.</p><div class="cyc">'+
+  card(vurl('trac','plow','#d9482b',1),'Arado','terra crua e palhada',1)+card(vurl('trac','seed','#d9482b',1),'Plantadeira','terra arada',1)+card(vurl('trac','spray','#d9482b',1),'Pulverizador','plantas crescendo',1)+card(vurl('trac','harv','#d9482b',1),'Plataforma','plantas maduras',1)+'</div>'+
+  '<div class="tip"><b>✨ Modo AUTO:</b> o trator troca de ferramenta conforme o chão. É o jeito mais fácil de jogar. Escolha uma ferramenta fixa quando quiser fazer só um serviço.</div>'+
+  '<p class="gp">A faixa logo acima dos botões mostra o que há embaixo do trator e o que fazer ali. O botão 🔍 afasta a câmera para ver a fazenda inteira.</p>'],
+ ['Máquinas autônomas',()=>'<p class="gp">Compradas na <b>Loja</b>, elas procuram serviço em todos os seus campos e trabalham sem parar. Cada uma faz um só serviço.</p><div class="cyc">'+
+  Object.keys(MTYPES).map(k=>card(vurl(k==='harv'?'harv':'trac',k,MTYPES[k].col),MTYPES[k].name,'a partir de $'+MTYPES[k].base,1)).join('')+'</div>'+
+  '<div class="tip"><b>Uma de cada fecha o ciclo:</b> com as quatro, a fazenda ara, planta, pulveriza e colhe sozinha. Você só vende e reinveste.</div>'+
+  '<p class="gp">Cada máquina a mais do mesmo tipo custa 50% a mais (máximo de 6 por tipo). Quando o serviço acaba, elas voltam para o pátio. Colheitadeiras param se o silo encher.</p>'],
+ ['Culturas',()=>'<p class="gp">Libere sementes novas na Loja e escolha o que plantar em cada campo na aba <b>Campos</b>. As mais caras demoram mais, mas rendem muito mais.</p><table class="ct"><tr><th></th><th>Cultura</th><th>Preço normal</th><th>Cresce em</th><th>Licença</th></tr>'+
+  CROPS.map(C=>'<tr><td>'+C.ico+'</td><td><b>'+C.name+'</b></td><td>$'+C.price+'</td><td>'+C.time+' s</td><td>'+(C.cost?'$'+fmt(C.cost):'grátis')+'</td></tr>').join('')+'</table>'+
+  '<p class="gp">Trocar a cultura de um campo vale para os próximos plantios; o que já está crescendo segue até a colheita.</p>'],
+ ['Silo e mercado',()=>'<p class="gp">Tudo o que é colhido vai para o <b>silo</b> (começa com 300 sacas). Com o silo cheio, a colheita para até você vender.</p>'+
+  '<div class="tip"><b>💰 Preços mudam todo dia:</b> cada cultura varia entre 75% e 135% do preço normal. ▲ é dia bom para vender, ▼ é dia de segurar.</div>'+
+  '<p class="gp">O botão <b>Vender</b> do topo vende tudo pelo preço do dia. Na aba <b>Mercado</b> da Loja você vende uma cultura de cada vez.</p>'+
+  '<p class="gp">Melhorias úteis: <b>Silo maior</b> dobra a capacidade a cada nível, e o <b>Contrato com a cooperativa</b> vende tudo sozinho quando o silo enche.</p>'],
+ ['Tempo e clima',()=>'<p class="gp">Um dia dura <b>5 minutos</b>. À noite a fazenda escurece e as máquinas acendem os faróis, mas o trabalho continua igual.</p>'+
+  '<div class="tip"><b>🌧️ Chuva:</b> em cerca de 3 a cada 10 dias chove por um tempo, e tudo cresce 60% mais rápido.</div>'+
+  '<p class="gp">A melhoria <b>Irrigação</b> acelera o crescimento em 15% por nível, com sol ou com chuva. O jogo salva sozinho neste navegador a cada poucos segundos.</p>'],
+ ['Dicas do Seu Zé',()=>['Comece vendendo a primeira colheita e comprando uma máquina; depois compre o Campo 2.','Pulverizar sempre compensa: +25% de colheita e nada de erva daninha.','Com a fazenda cheia, o silo vira o gargalo. Aumente o silo ou feche o contrato com a cooperativa.','Campos grandes pedem mais de uma máquina do mesmo tipo.','Seu trator é mais rápido que as máquinas: ajude onde o serviço está atrasado.','Afaste a câmera (🔍) para ver quanto de cada campo já está maduro.'].map(t=>'<div class="tip">'+t+'</div>').join('')+
+  (S.tut>=TUT.length?'<button class="btn w" id="gtut">Rever o tutorial do Seu Zé</button>':'')]];
+let gp=0;
+function renderGuide(){$('#gtitle').textContent=GUIDE[gp][0];$('#gbody').innerHTML=GUIDE[gp][1]();$('#gbody').scrollTop=0;$('#gdots').textContent=(gp+1)+' / '+GUIDE.length;$('#gprev').disabled=gp===0;$('#gnext').textContent=gp===GUIDE.length-1?'Fechar ✓':'Avançar ▶';
+ const b=$('#gtut');if(b)b.onclick=()=>{S.tut=0;P.moved=0;cStep=-1;$('#guide').classList.remove('show')}}
+const openGuide=()=>{$('#guide').classList.add('show');renderGuide()};
+$('#bGuide').onclick=openGuide;$('#bHow').onclick=openGuide;$('#gx').onclick=()=>$('#guide').classList.remove('show');
+$('#gprev').onclick=()=>{gp=Math.max(0,gp-1);renderGuide()};$('#gnext').onclick=()=>{if(gp===GUIDE.length-1){gp=0;$('#guide').classList.remove('show')}else{gp++;renderGuide()}};
+$('#guide').addEventListener('click',e=>{if(e.target.id==='guide')$('#guide').classList.remove('show')});
+
 /* ---------- tela / câmera ---------- */
 const cv=$('#game'),ctx=cv.getContext('2d'),fx=$('#fx'),fctx=fx.getContext('2d');
 let W=0,H=0,base=3,zi=0,scale=3,vw=0,vh=0,dpr=1;const cam={x:P.x,y:P.y};
@@ -466,11 +591,11 @@ function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(2,devicePixelRatio||1)
  light.width=vw;light.height=vh;fx.width=W*dpr;fx.height=H*dpr;fx.style.width=W+'px';fx.style.height=H+'px'}
 addEventListener('resize',resize);
 $('#bZoom').onclick=()=>{zi=(zi+1)%3;resize()};
-addEventListener('wheel',e=>{if($('#shop').classList.contains('show'))return;zi=clamp(zi+(e.deltaY>0?1:-1),0,2);resize()},{passive:true});
+addEventListener('wheel',e=>{if(document.querySelector('.ovl.show'))return;zi=clamp(zi+(e.deltaY>0?1:-1),0,2);resize()},{passive:true});
 addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=true;
  if(!started)return;const i='12345'.indexOf(k);if(i>=0)setTool(['auto','plow','seed','spray','harv'][i]);
  if(k==='l'||k==='e'){$('#shop').classList.contains('show')?$('#shop').classList.remove('show'):openShop()}
- if(k==='Escape')$('#shop').classList.remove('show');if(k==='v')sellAll();if(k==='z'){zi=(zi+1)%3;resize()}
+ if(k==='Escape'){$('#shop').classList.remove('show');$('#guide').classList.remove('show')}if(k==='g'){$('#guide').classList.contains('show')?$('#guide').classList.remove('show'):openGuide()}if(k==='v')sellAll();if(k==='z'){zi=(zi+1)%3;resize()}
  if(k.startsWith('Arrow')||k===' ')e.preventDefault()});
 addEventListener('keyup',e=>{keys[e.key.length===1?e.key.toLowerCase():e.key]=false});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;joy=null});
@@ -502,9 +627,13 @@ function render(dt){
  const txt=(s,x,y,size,col)=>{fctx.font='700 '+size+'px "Pixelify Sans",monospace';fctx.lineWidth=4;fctx.strokeStyle='#1c120b';fctx.strokeText(s,x,y);fctx.fillStyle=col;fctx.fillText(s,x,y)};
  FIELDS.forEach((F,f)=>{const sx=((F.x+F.w/2)*T-L)*scale,sy=((F.y+F.h/2)*T-T0)*scale;if(sx<-80||sy<-40||sx>W+80||sy>H+40)return;
   if(!S.owned[f]){txt('Campo '+(f+1),sx,sy-10,15,'#fff3d6');txt('À venda $'+fmt(F.price),sx,sy+9,14,S.money>=F.price?'#8fd46a':'#f2c230')}
-  else if(zi>0)txt(CROPS[S.fcrop[f]].ico,sx,sy,18,'#fff')});
+  else if(zi>0)txt(CROPS[S.fcrop[f]].ico+(fpct[f]?' '+fpct[f]+'%':''),sx,sy,17,fpct[f]>=50?'#ffe98a':'#fff')});
  for(const m of M)if(m.full)txt('Silo cheio!',(m.x-L)*scale,(m.y-T0-14)*scale,12,'#f08a6a');
  for(const f of floats){fctx.globalAlpha=Math.min(1,f.l*2);txt(f.txt,(f.x-L)*scale,(f.y-T0)*scale-(1.3-f.l)*34,16,f.col)}fctx.globalAlpha=1;
+ const ob=objective();if(ob){const sx=(ob[0]-L)*scale,sy=(ob[1]-T0)*scale,b=Math.sin(performance.now()/160)*6,mx=40,mt=130,mb=Math.max(mt+10,H-230);
+  const inside=sx>mx&&sx<W-mx&&sy>mt&&sy<mb;let ax=clamp(sx,mx,W-mx),ay=clamp(sy,mt,mb),ang=inside?Math.PI/2:Math.atan2(sy-ay,sx-ax);
+  if(inside)ay=sy-36+b;else{ax+=Math.cos(ang)*b;ay+=Math.sin(ang)*b}
+  fctx.save();fctx.translate(ax,ay);fctx.rotate(ang);fctx.beginPath();fctx.moveTo(18,0);fctx.lineTo(-12,-15);fctx.lineTo(-5,0);fctx.lineTo(-12,15);fctx.closePath();fctx.lineWidth=5;fctx.strokeStyle='#33241a';fctx.stroke();fctx.fillStyle='#f2c230';fctx.fill();fctx.restore()}
  if(joy){fctx.lineWidth=3;fctx.strokeStyle='rgba(255,243,214,.7)';fctx.fillStyle='rgba(51,36,26,.3)';fctx.beginPath();fctx.arc(joy.ox,joy.oy,52,0,7);fctx.fill();fctx.stroke();
   const l=Math.hypot(joy.dx,joy.dy),m=l>45?45/l:1;fctx.fillStyle='rgba(242,194,48,.9)';fctx.beginPath();fctx.arc(joy.ox+joy.dx*m,joy.oy+joy.dy*m,22,0,7);fctx.fill();fctx.strokeStyle='#33241a';fctx.stroke()}
 }
@@ -520,7 +649,7 @@ function step(dt){
  misT+=dt;if(misT>.4){misT=0;if(started)checkMission()}
  hudT+=dt;if(hudT>.25){hudT=0;hud()}
  saveT+=dt;if(saveT>8){saveT=0;if(started)save()}
- music(dt);
+ music(dt);coach(dt);
 }
 function frame(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;step(dt);render(dt);requestAnimationFrame(frame)}
 addEventListener('visibilitychange',()=>{if(document.hidden&&started)save()});
@@ -530,11 +659,11 @@ addEventListener('pagehide',()=>{if(started)save()});
 S=newState();const had=load();spawnMachines();resize();drawWorld();hud();
 if(had){$('#bPlay').textContent='▶ Continuar';$('#bNew').style.display=''}
 $('#bPlay').onclick=()=>{initAudio();if(AC&&AC.state==='suspended')AC.resume();started=true;$('#title').classList.remove('show');sfx.buy();
- if(!had||S.stats.plowed<5)setTimeout(()=>toast('Dirija até o Campo 1 (à esquerda) — no modo AUTO o trator faz tudo!'),600)};
+hud()};
 let armed=0;$('#bNew').onclick=()=>{if(!armed){armed=1;$('#bNew').textContent='Apagar o progresso? Toque de novo';$('#bNew').classList.add('r');return}
  try{localStorage.removeItem(KEY)}catch(e){}reset();$('#bNew').style.display='none';$('#bPlay').textContent='▶ Jogar'};
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{});
-window.__farm={get S(){return S},P,get M(){return M},step,st,ftiles};
+window.__farm={get S(){return S},P,TUT,get M(){return M},step,st,ftiles};
 requestAnimationFrame(frame);
 })();
 </script>
