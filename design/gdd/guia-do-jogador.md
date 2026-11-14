@@ -12,19 +12,20 @@ tutorial guiado pelo Seu Zé, almanaque ilustrado (📖), faixa de contexto do l
 e nunca fica sem saber o que o chão embaixo do trator está pedindo.
 
 ## 3. Regras detalhadas
-### 3.1 Tutorial do Seu Zé (10 passos)
+### 3.1 Tutorial do Seu Zé (11 passos)
 | # | Ensina | Conclui quando |
 |---|--------|----------------|
 | 1 | Boas-vindas | jogador toca em Próximo |
 | 2 | Dirigir | trator andou 90 px |
 | 3 | Achar o Campo 1 (seta dourada) | trator dentro do Campo 1 |
-| 4 | Arar no modo AUTO | 30 lotes arados |
-| 5 | Plantar | 30 lotes plantados |
-| 6 | Pulverizar | 20 lotes pulverizados |
-| 7 | Esperar e colher | 40 lotes colhidos |
+| 4 | Arar (arado engatado) | 30 lotes arados |
+| 5 | Trocar para a plantadeira e plantar | 30 lotes plantados |
+| 6 | Trocar para o pulverizador | 20 lotes pulverizados |
+| 7 | Trocar o trator pela colheitadeira e colher | 40 lotes colhidos |
 | 8 | Vender (botão pulsa) | 1 venda feita |
-| 9 | Comprar máquina autônoma (Loja pulsa) | 1 máquina comprada |
-| 10 | Encerramento e convite ao almanaque | jogador toca em Bora! |
+| 9 | Chamar o ajudante (botão pulsa) | ajudante ligado uma vez |
+| 10 | Comprar máquina autônoma (Loja pulsa) | 1 máquina comprada |
+| 11 | Encerramento e convite ao almanaque | jogador toca em Bora! |
 
 - Texto em efeito de máquina de escrever (50 caracteres/s); tocar em Próximo completa o texto.
 - Passos de ação mostram barra de progresso e contador.
@@ -43,6 +44,12 @@ Acima dos botões de ferramenta: campo atual, estado do lote sob o trator e a a�
 ### 3.4 Seta de objetivo
 Durante os passos 3 a 7, se o trator está fora do Campo 1: seta dourada na borda da tela apontando
 para o campo; com o campo visível, a seta quica sobre ele.
+
+### 3.5 Ajudante e aba Equipe
+Não existe modo que escolhe a ferramenta sozinho: cada equipamento faz um serviço. O botão AJUDANTE
+coloca um funcionário na máquina do jogador; ele faz um serviço de cada vez (colher, arar, plantar,
+pulverizar), troca de equipamento sozinho e devolve o volante ao primeiro toque no controle.
+A aba Equipe mostra o que cada máquina faz e permite pausar um serviço para toda a equipe.
 
 ## 4. Fórmulas
 - Progresso do passo = min(1, atual / meta).

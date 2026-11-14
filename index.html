@@ -32,6 +32,8 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
 .tool{pointer-events:auto;width:58px;height:58px;background:var(--cream);border:3px solid var(--ink);border-radius:8px;box-shadow:0 4px 0 rgba(0,0,0,.35);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0}
 .tool span{font-size:22px;line-height:1}
 .tool.on{background:#8fd46a;transform:translateY(-5px)}
+#bPilot{background:#ffe9a8;margin-left:6px}#bPilot.on{background:var(--gold);transform:translateY(-5px);outline:3px solid #fff}
+.fbar{display:flex;height:9px;border:2px solid var(--ink);border-radius:4px;overflow:hidden;background:#7d8a3c;margin:4px 0}.fbar i{display:block;height:100%}
 .tool kbd{position:absolute;display:none}
 #toasts{position:fixed;left:50%;top:150px;transform:translateX(-50%);display:flex;flex-direction:column;gap:6px;align-items:center;z-index:8;pointer-events:none;width:92vw}
 .toast{background:var(--ink);color:#fff3d6;padding:7px 12px;border-radius:6px;font-size:15px;font-weight:600;animation:tin .25s ease-out;text-align:center;border:2px solid var(--gold)}
@@ -91,7 +93,7 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
 .ct th{background:var(--cream2);font-size:12px}
 .tip{background:#fffaf0;border:3px solid var(--ink);border-left:10px solid var(--green);border-radius:6px;padding:7px 9px;font-size:14px;line-height:1.35}
 @media (max-height:520px){#coach{bottom:70px}#coach img{width:40px;height:40px}#coach .say{font-size:13px;min-height:0}#ctx{display:none!important}}
-@media (max-width:520px){.chip{font-size:14px;padding:4px 7px}.btn{font-size:14px;padding:5px 8px}#mission{top:88px;font-size:13px}.tool{width:54px;height:54px}}
+@media (max-width:520px){.tab{min-width:30%}.chip{font-size:14px;padding:4px 7px}.btn{font-size:14px;padding:5px 8px}#mission{top:88px;font-size:13px}.tool{width:54px;height:54px}}
 @media (max-height:420px){#mission{top:50px}.tool{width:48px;height:48px}.tool span{font-size:18px}}
 </style>
 </head>
@@ -115,15 +117,15 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
 <div id="ctx"></div>
 <div id="coach" class="px"><div style="flex:1;min-width:0"><div class="who">SEU ZÉ · PASSO <span id="cstep"></span></div><div class="say" id="csay"></div><div class="row"><div class="prog" id="cprog"><i></i></div><span id="cnum"></span><button class="skip" id="cskip">pular tutorial</button><button class="btn g" id="cnext">Próximo ▶</button></div></div></div>
 <div id="tools">
-  <button class="tool on" data-t="auto"><span>✨</span>AUTO</button>
-  <button class="tool" data-t="plow"><span>🟤</span>ARAR</button>
+  <button class="tool on" data-t="plow"><span>🟤</span>ARAR</button>
   <button class="tool" data-t="seed"><span>🌱</span>PLANTAR</button>
   <button class="tool" data-t="spray"><span>💧</span>BORRIFAR</button>
   <button class="tool" data-t="harv"><span>🌾</span>COLHER</button>
+  <button class="tool" id="bPilot"><span>🧑‍🌾</span>AJUDANTE</button>
 </div>
 
 <div class="ovl" id="shop"><div class="panel">
-  <div class="phead">🛒 Loja da Fazenda <button class="x" data-act="close">X</button></div>
+  <div class="phead">🛒 Loja e Gestão <button class="x" data-act="close">X</button></div>
   <div class="tabs" id="tabs"></div>
   <div class="pbody" id="pbody"></div>
 </div></div>
@@ -134,7 +136,7 @@ button{font-family:inherit;color:var(--ink);cursor:pointer}
   <button class="btn g" id="bPlay">▶ Jogar</button>
   <button class="btn w" id="bHow">📖 Como jogar</button>
   <button class="btn w" id="bNew" style="display:none">Novo jogo</button>
-  <div class="help"><b>PC:</b> WASD ou setas para dirigir · 1–5 troca a ferramenta · L loja · G guia<br><b>Celular:</b> arraste o dedo na tela para dirigir o trator</div>
+  <div class="help"><b>PC:</b> WASD ou setas para dirigir · 1–4 troca o equipamento · 5 ajudante · L loja · G guia<br><b>Celular:</b> arraste o dedo na tela para dirigir o trator</div>
 </div></div>
 
 <div class="ovl" id="guide"><div class="panel">
@@ -190,8 +192,8 @@ const MISSIONS=[
 const kind=new Uint8Array(N),fid=new Int8Array(N).fill(-1),st=new Uint8Array(N),cr=new Uint8Array(N),weed=new Uint8Array(N),spr=new Uint8Array(N),stg=new Uint8Array(N),g=new Float32Array(N);
 const ftiles=[];
 let S;
-function newState(){return{v:1,money:0,earned:0,stats:{plowed:0,seeded:0,sprayed:0,harvested:0,sold:0},stock:[0,0,0,0,0],day:1,tod:.3,owned:[1,0,0,0,0,0,0,0],fcrop:[0,0,0,0,0,0,0,0],crops:[1,0,0,0,0],up:{pspd:0,pwid:0,aspd:0,awid:0,silo:0,irr:0,auto:0},machines:[],mi:0,pm:[1,1,1,1,1],sound:1,tut:0}}
-const P={x:36.5*T,y:29*T,a:0,tool:'auto',vis:'plow',hacc:0,hc:0,spd:0,moved:0,dist:0,mov:0};
+function newState(){return{v:1,money:0,earned:0,stats:{plowed:0,seeded:0,sprayed:0,harvested:0,sold:0},stock:[0,0,0,0,0],day:1,tod:.3,owned:[1,0,0,0,0,0,0,0],fcrop:[0,0,0,0,0,0,0,0],crops:[1,0,0,0,0],up:{pspd:0,pwid:0,aspd:0,awid:0,silo:0,irr:0,auto:0},machines:[],mi:0,pm:[1,1,1,1,1],sound:1,tut:0,tv:2,job:{plow:1,seed:1,spray:1,harv:1}}}
+const P={x:36.5*T,y:29*T,a:0,tool:'plow',vis:'plow',type:'plow',pilot:0,used:0,wps:[],f:-1,scan:0,idx:-1,hacc:0,hc:0,spd:0,moved:0,dist:0,mov:0};
 let M=[];let rain=0,started=false;
 const cap=()=>300*Math.pow(2,S.up.silo);
 const total=()=>S.stock[0]+S.stock[1]+S.stock[2]+S.stock[3]+S.stock[4];
@@ -408,7 +410,7 @@ function stackSprite(key,make,ai){const k=key+'@'+ai;if(SCACHE[k])return SCACHE[
 const angIdx=a=>((Math.round(a/(Math.PI*2)*NA)%NA)+NA)%NA;
 const pModel=()=>['mini','mid','big','huge','huge'][S.up.pwid],aModel=()=>['mid','big','huge'][S.up.awid];
 const PCOLR='#d92b2b';
-function vcfg(v){const isP=v===P;return isP?{mdl:pModel(),col:PCOLR,harv:0,tool:P.vis,wT:pW(),hat:1}:{mdl:aModel(),col:MTYPES[v.type].col,harv:v.type==='harv',tool:v.type,wT:aW(),hat:0}}
+function vcfg(v){const isP=v===P;return isP?{mdl:pModel(),col:PCOLR,harv:P.vis==='harv',tool:P.vis,wT:pW(),hat:1}:{mdl:aModel(),col:MTYPES[v.type].col,harv:v.type==='harv',tool:v.type,wT:aW(),hat:0}}
 function voff(c,tool){return c.harv?20:tool==='harv'?TM[c.mdl].fa+11:-(TM[c.mdl].ra+TM[c.mdl].rr+8)}
 function drawVehicleTo(c,v,g,L,T0,anim){
  const fr=((v.dist||0)/4|0)&1,ai=angIdx(v.a),aa=ai*Math.PI*2/NA,ca=Math.cos(aa),sa=Math.sin(aa),x=Math.round(v.x-L),y=Math.round(v.y-T0);
@@ -420,7 +422,7 @@ function drawVehicleTo(c,v,g,L,T0,anim){
  const dI=()=>c.drawImage(imp.img,ix-imp.ox,iy-imp.oy),dB=()=>c.drawImage(body.img,x-body.ox,y-body.oy-by);
  if(iy<=y){dI();dB()}else{dB();dI()}
 }
-function vthumb(type,tool){return mk(84,60,c=>{const g=type?{mdl:'mid',col:MTYPES[type].col,harv:type==='harv',tool:type,wT:3,hat:0}:{mdl:'mini',col:PCOLR,harv:0,tool,wT:3,hat:1};
+function vthumb(type,tool){return mk(84,60,c=>{const g=type?{mdl:'mid',col:MTYPES[type].col,harv:type==='harv',tool:type,wT:3,hat:0}:{mdl:'mini',col:PCOLR,harv:tool==='harv',tool,wT:3,hat:1};
  drawVehicleTo(c,{x:g.harv?34:g.tool==='harv'?32:52,y:40,a:0,dist:0},g,0,0,0)}).toDataURL()}
 function exhaust(v,g,dt,rate){if(Math.random()>dt*rate)return;const ca=Math.cos(v.a),sa=Math.sin(v.a),m=TM[g.mdl],ex=g.harv?-9:m.fa-3,ez=g.harv?19:m.ht+5;
  parts.push({x:v.x+ca*ex,y:v.y+sa*ex-ez,vx:(Math.random()-.5)*6-ca*8,vy:-10-Math.random()*6,l:.8+Math.random()*.4,c:'#4a4a4a',s:2,al:.45})}
@@ -458,10 +460,8 @@ function sweep(v,off,wT,fn){const ca=Math.cos(v.a),sa=Math.sin(v.a),bx=v.x+ca*of
  for(let k=-half;k<=half;k+=5){const tx=Math.floor((bx-sa*k)/T),ty=Math.floor((by+ca*k)/T);if(tx<0||ty<0||tx>=MW||ty>=MH)continue;fn(ty*MW+tx)}}
 function work(v,type,wT){
  let did=false;v.full=0;const gc=vcfg(v);
- if(type==='auto'){sweep(v,voff(gc,'harv'),wT,i=>{if(doTile(i,'harv',v)){did=true;v.vis='harv'}});
-  sweep(v,voff(gc,'plow'),wT,i=>{const s=st[i];const t=s===1?'seed':s===2?'spray':(s===0||s===4)?'plow':null;if(t&&doTile(i,t,v)){did=true;if(v.vis!=='harv'||!v.hold)v.vis=t}});}
- else sweep(v,voff(gc,type),wT,i=>{if(doTile(i,type,v))did=true});
- if(did&&(type==='harv'||v.vis==='harv'&&type==='auto')&&Math.random()<.5)chaff(v);
+ sweep(v,voff(gc,type),wT,i=>{if(doTile(i,type,v))did=true});
+ if(did&&type==='harv'&&Math.random()<.5)chaff(v);
  return did;
 }
 
@@ -471,12 +471,12 @@ const claims={};
 const park=i=>[592+(i%3)*22,444+(i/3|0)*18];
 function spawnMachines(){M=S.machines.map((t,i)=>({type:t,x:park(i)[0],y:park(i)[1],a:-Math.PI/2,wps:[],f:-1,scan:Math.random()*1.5,hacc:0,hc:0,full:0,idx:i}))}
 function plan(m){
- let best=-1,bn=3;
+ if(!S.job[m.type])return false;let best=-1,bn=3;
  for(let f=0;f<FIELDS.length;f++){if(!S.owned[f]||(claims[m.type+f]!==undefined&&claims[m.type+f]!==m.idx))continue;const F=FIELDS[f];let n=0;
   for(let y=F.y;y<F.y+F.h;y++)for(let x=F.x;x<F.x+F.w;x++)if(needs(m.type,y*MW+x))n++;
   if(n>bn){bn=n;best=f}}
  if(best<0)return false;
- const F=FIELDS[best],W=Math.min(aW(),F.h),lanes=[];
+ const F=FIELDS[best],W=Math.min(m===P?pW():aW(),F.h),lanes=[];
  for(let r=0;r<F.h;r+=W){const r0=Math.min(r,F.h-W);let mn=1e9,mx=-1;
   for(let y=F.y+r0;y<F.y+r0+W;y++)for(let x=F.x;x<F.x+F.w;x++)if(needs(m.type,y*MW+x)){if(x<mn)mn=x;if(x>mx)mx=x}
   if(mx>=0)lanes.push({cy:(F.y+r0+W/2)*T,x0:(mn-2)*T,x1:(mx+3)*T})}
@@ -514,6 +514,7 @@ function inputVec(){let x=0,y=0;if(keys.ArrowLeft||keys.a)x--;if(keys.ArrowRight
  if(joy){const l=Math.hypot(joy.dx,joy.dy);if(l>8){const m=Math.min(1,l/45);return[joy.dx/l*m,joy.dy/l*m]}}return[0,0]}
 function updPlayer(dt){
  const[ix,iy]=inputVec(),mag=Math.hypot(ix,iy);P.spd=mag;P.mov=0;
+ if(P.pilot){if(mag>.05)setPilot(0);else pilotStep(dt)}
  if(mag>.05){
   let da=Math.atan2(iy,ix)-P.a;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
   P.a+=clamp(da,-6*dt,6*dt);const sp=62*(1+.12*S.up.pspd)*mag*Math.max(.25,Math.cos(da));
@@ -523,11 +524,27 @@ function updPlayer(dt){
   P.moved+=sp*dt;P.dist+=sp*dt;P.mov=1;const kk=kind[((P.y/T)|0)*MW+((P.x/T)|0)];
   if((kk===1||kk===4)&&Math.random()<.3)parts.push({x:P.x-Math.cos(P.a)*10,y:P.y-Math.sin(P.a)*10,vx:(Math.random()-.5)*8,vy:-6,l:.5,c:'#c9b48a',s:2,al:.5});
  }
- if(P.tool!=='auto')P.vis=P.tool;
+ P.vis=P.tool;
  if(work(P,P.tool,pW())){const n=performance.now();if(n-lastTick>90){lastTick=n;sfx.tick({plow:180,seed:520,spray:760,harv:340}[P.vis]||300)}}
- flushHarv(P,dt);exhaust(P,vcfg(P),dt,mag>.05?9:2);
+ flushHarv(P,dt);exhaust(P,vcfg(P),dt,P.mov?9:2);
  if(engG)engG.gain.value=S.sound&&started?(.012+mag*.02):0;
 }
+
+function pilotStep(dt){
+ const spd=62*(1+.12*S.up.pspd)*.9;
+ if(P.wps.length){if(P.tool==='harv'&&total()>=cap())return;
+  if(drive(P,P.wps[0][0],P.wps[0][1],spd,dt))P.wps.shift();
+  if(!P.wps.length){delete claims[P.type+P.f];P.f=-1;P.scan=.3}}
+ else{P.scan-=dt;if(P.scan>0)return;P.scan=1;
+  for(const t of['harv','plow','seed','spray']){if(t==='harv'&&total()>=cap())continue;P.type=t;if(plan(P)){if(P.tool!==t)setTool(t,1);break}}}
+}
+function setPilot(on){
+ if(!!P.pilot===!!on)return;P.pilot=on?1:0;if(P.f>=0)delete claims[P.type+P.f];P.wps=[];P.f=-1;P.scan=0;
+ if(on){P.used=1;toast('🧑‍🌾 Ajudante ao volante! Ele faz um serviço de cada vez. Mexa no controle para assumir.')}else toast('Você assumiu o volante.');
+ $('#bPilot').classList.toggle('on',!!on);sfx.tick(on?700:380);
+}
+const JOBN={plow:'Arar',seed:'Plantar',spray:'Pulverizar',harv:'Colher'},JOBG={plow:'Arando',seed:'Plantando',spray:'Pulverizando',harv:'Colhendo'};
+function statusOf(m){const t=m===P?P.type:m.type;return m.wps.length?JOBG[t]+' o Campo '+(m.f+1):t==='harv'&&total()>=cap()?'Esperando o silo esvaziar':!S.job[t]&&m!==P?'Serviço pausado por você':'Sem serviço no momento'}
 
 /* ---------- economia ---------- */
 function sellAll(silent){let v=0,q=0;for(let c=0;c<5;c++){const n=Math.floor(S.stock[c]);if(n>0){v+=n*price(c);q+=n;S.stock[c]-=n}}
@@ -555,10 +572,10 @@ const KEY='fazenda-sossego-v1';
 function save(){try{const n=ftiles.length,a=new Array(n),b=new Array(n),c=new Array(n),d=new Array(n);
  for(let k=0;k<n;k++){const i=ftiles[k];a[k]=st[i];b[k]=cr[i];c[k]=weed[i]|spr[i]<<1;d[k]=Math.round(g[i]*100)}
  localStorage.setItem(KEY,JSON.stringify({S,t:[a,b,c,d],p:[P.x|0,P.y|0]}))}catch(e){}}
-function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(!j||!j.S||j.S.v!==1)return false;S=Object.assign(newState(),j.S);if(j.S.tut===undefined)S.tut=S.mi>=6?99:0;S.up=Object.assign(newState().up,j.S.up);
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(!j||!j.S||j.S.v!==1)return false;S=Object.assign(newState(),j.S);if(j.S.tut===undefined)S.tut=S.mi>=6?99:0;if(!j.S.tv){if(S.tut>=8)S.tut=99;S.tv=2}S.job=Object.assign(newState().job,j.S.job);S.up=Object.assign(newState().up,j.S.up);
  const[a,b,c,d]=j.t;for(let k=0;k<ftiles.length;k++){const i=ftiles[k];st[i]=a[k]||0;cr[i]=b[k]||0;weed[i]=c[k]&1;spr[i]=c[k]>>1&1;g[i]=(d[k]||0)/100;stg[i]=Math.min(3,g[i]*4|0)}
  if(j.p){P.x=j.p[0];P.y=j.p[1]}return true}catch(e){return false}}
-function reset(){S=newState();for(const i of ftiles){st[i]=cr[i]=weed[i]=spr[i]=stg[i]=0;g[i]=0}P.x=36.5*T;P.y=29*T;P.a=0;P.moved=0;for(const k in claims)delete claims[k];spawnMachines();drawWorld();hud()}
+function reset(){S=newState();for(const i of ftiles){st[i]=cr[i]=weed[i]=spr[i]=stg[i]=0;g[i]=0}P.x=36.5*T;P.y=29*T;P.a=0;P.moved=0;P.pilot=0;P.wps=[];P.f=-1;$('#bPilot').classList.remove('on');setTool('plow',1);for(const k in claims)delete claims[k];spawnMachines();drawWorld();hud()}
 
 /* ---------- HUD e loja ---------- */
 function hud(){
@@ -572,7 +589,7 @@ function hud(){
  else{$('#mtxt').innerHTML='🌟 <b>Fazenda lendária!</b> Continue crescendo.';$('#mbar i').style.width='100%'}
 }
 let tab='maq';
-const TABS=[['maq','<i>🚜</i>Máquinas'],['campos','<i>🗺️</i>Campos'],['sem','<i>🌱</i>Sementes'],['up','<i>⚙️</i>Melhorias'],['merc','<i>💰</i>Mercado']];
+const TABS=[['eq','<i>👥</i>Equipe'],['maq','<i>🚜</i>Máquinas'],['campos','<i>🗺️</i>Campos'],['sem','<i>🌱</i>Sementes'],['up','<i>⚙️</i>Melhorias'],['merc','<i>💰</i>Mercado']];
 const iconURL={};
 function micon(t){return iconURL[t]||(iconURL[t]=vthumb(t))}
 function item(ic,title,desc,btn){return'<div class="item"><div class="ic" '+(ic.startsWith('data:')?'style="background-color:#7aa85a;background-image:url('+ic+')">':'>'+ic)+'</div><div class="tx"><b>'+title+'</b>'+desc+'</div>'+btn+'</div>'}
@@ -580,10 +597,16 @@ const bbtn=(act,k,cost,label)=>'<button class="btn '+(S.money>=cost?'g':'')+'" d
 function renderShop(){
  $('#tabs').innerHTML=TABS.map(([k,n])=>'<button class="tab '+(k===tab?'on':'')+'" data-act="tab" data-k="'+k+'">'+n+'</button>').join('');
  let h='';
+ if(tab==='eq'){h+='<div class="tx" style="font-size:13px">Você é o gerente: decida o que a equipe faz. Pause a colheita para segurar a safra no campo até o preço subir.</div>';
+  h+='<div class="item"><div class="tx"><b>Serviços liberados para a equipe</b><div class="crops">'+Object.keys(JOBN).map(k=>'<button class="cb '+(S.job[k]?'on':'')+'" data-act="job" data-k="'+k+'" style="font-size:13px;font-weight:700">'+(S.job[k]?'✓ ':'✕ ')+JOBN[k]+'</button>').join('')+'</div></div></div>';
+  h+=item(iconURL.me||(iconURL.me=vthumb(null,'plow')),'Sua máquina',P.pilot?'Ajudante: '+statusOf(P):'Você está dirigindo. O ajudante pode assumir.','<button class="btn '+(P.pilot?'r':'g')+'" data-act="pilot">'+(P.pilot?'Assumir':'Chamar ajudante')+'</button>');
+  M.forEach(m=>h+=item(micon(m.type),MTYPES[m.type].name,statusOf(m),''));
+  if(!M.length)h+='<div class="tip">Nenhuma máquina autônoma ainda. Compre na aba <b>Máquinas</b> e ela aparece aqui com o que está fazendo.</div>'}
  if(tab==='maq'){h+='<div class="tx" style="font-size:13px">Máquinas autônomas trabalham sozinhas em todos os seus campos, dia e noite.</div>';
   for(const t in MTYPES){const n=S.machines.filter(m=>m===t).length;h+=item(micon(t),MTYPES[t].name,MTYPES[t].desc+'<br>Você tem: <b style="display:inline;font-size:13px">'+n+'</b>',n>=6?'<button class="btn" disabled>MÁX</button>':bbtn('buyM',t,mprice(t)))}}
  if(tab==='campos')FIELDS.forEach((F,f)=>{
-  if(S.owned[f])h+=item(CROPS[S.fcrop[f]].ico,'Campo '+(f+1)+' · '+F.w*F.h+' lotes','Escolha o que plantar:<div class="crops">'+CROPS.map((C,c)=>S.crops[c]?'<button class="cb '+(S.fcrop[f]===c?'on':'')+'" data-act="crop" data-k="'+f+'" data-c="'+c+'">'+C.ico+'</button>':'').join('')+'</div>','');
+  if(S.owned[f]){const n=F.w*F.h,c=[0,0,0,0,0];for(let y=F.y;y<F.y+F.h;y++)for(let x=F.x;x<F.x+F.w;x++)c[st[y*MW+x]]++;const pc=k=>Math.round(c[k]/n*100);
+   h+=item(CROPS[S.fcrop[f]].ico,'Campo '+(f+1)+' · '+n+' lotes','<div class="fbar"><i style="width:'+pc(3)+'%;background:#e9b824"></i><i style="width:'+pc(2)+'%;background:#5fa64a"></i><i style="width:'+pc(1)+'%;background:#5b3b24"></i></div>'+pc(3)+'% maduro · '+pc(2)+'% crescendo · '+pc(1)+'% arado<br>Plantar aqui:<div class="crops">'+CROPS.map((C,c)=>S.crops[c]?'<button class="cb '+(S.fcrop[f]===c?'on':'')+'" data-act="crop" data-k="'+f+'" data-c="'+c+'">'+C.ico+'</button>':'').join('')+'</div>','')}
   else h+=item('🪧','Campo '+(f+1)+' · '+F.w*F.h+' lotes','Terra à venda. Mais lotes, mais colheita.',bbtn('buyF',f,F.price))});
  if(tab==='sem')CROPS.forEach((C,c)=>h+=item(C.ico,C.name,'Vale ~$'+C.price+' por saca · cresce em '+C.time+'s',S.crops[c]?'<button class="btn w" disabled>Liberada ✓</button>':bbtn('buyC',c,C.cost)));
  if(tab==='up')for(const k in UPS){const U=UPS[k],l=S.up[k];h+=item(U.ico,U.name+' <small>nv '+l+'/'+U.max+'</small>',U.desc,l>=U.max?'<button class="btn" disabled>MÁX</button>':bbtn('buyU',k,uprice(k)))}
@@ -601,14 +624,18 @@ $('#shop').addEventListener('click',e=>{
  if(a==='buyC'&&buy(CROPS[k].cost)){S.crops[k]=1;toast(CROPS[k].ico+' '+CROPS[k].name+' liberado! Escolha em Campos.')}
  if(a==='buyU'&&buy(uprice(k))){S.up[k]++;toast('⚙️ '+UPS[k].name+' melhorado!')}
  if(a==='crop'){S.fcrop[k]=+t.dataset.c;sfx.tick(600)}
+ if(a==='job'){S.job[k]=S.job[k]?0:1;sfx.tick(S.job[k]?700:300)}
+ if(a==='pilot')setPilot(!P.pilot);
  if(a==='sell'){const q=Math.floor(S.stock[k]);if(q>0){const v=Math.round(q*price(k));S.stock[k]-=q;S.money+=v;S.earned+=v;S.stats.sold++;sfx.coin();toast('Vendido: '+fmt(q)+' sacas por $'+fmt(v))}}
  hud();renderShop();save();
 });
 const openShop=()=>{$('#shop').classList.add('show');renderShop()};
 $('#bShop').onclick=openShop;$('#bSell').onclick=()=>sellAll();
 $('#bSnd').onclick=()=>{S.sound=S.sound?0:1;hud()};
-document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
-function setTool(t){P.tool=t;if(t!=='auto')P.vis=t;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('on',b.dataset.t===t));sfx.tick(440)}
+document.querySelectorAll('.tool[data-t]').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
+$('#bPilot').onclick=()=>setPilot(!P.pilot);
+function setTool(t,auto){if(!auto&&P.pilot)setPilot(0);if(P.tool!==t&&(t==='harv'||P.tool==='harv'))for(let k=0;k<10;k++)parts.push({x:P.x+(Math.random()-.5)*26,y:P.y-6+(Math.random()-.5)*18,vx:(Math.random()-.5)*24,vy:-12-Math.random()*10,l:.6,c:'#e8e4da',s:3,al:.6});
+ P.tool=P.vis=t;document.querySelectorAll('.tool[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));if(!auto)sfx.tick(440)}
 
 /* ---------- contexto do lote ---------- */
 const TOOLN={plow:'ARAR',seed:'PLANTAR',spray:'PULVERIZAR',harv:'COLHER'};
@@ -631,13 +658,14 @@ const TUT=[
  {s:'Opa! Eu sou o Seu Zé. Bem-vindo à Fazenda Sossego! Vou te mostrar como tudo funciona por aqui.',next:1},
  {s:FINE?'Use WASD ou as setas do teclado para dirigir o trator. Dê uma voltinha pelo pátio!':'Arraste o dedo em qualquer lugar da tela para dirigir o trator. Dê uma voltinha pelo pátio!',p:()=>[P.moved,90]},
  {s:'Agora siga a seta dourada até o Campo 1, aquela terra cercada à esquerda.',tgt:0,p:()=>[inField(0)?1:0,1]},
- {s:'Essa terra está crua. No modo AUTO o trator escolhe a ferramenta sozinho: é só passar por cima. Are 30 lotes!',hl:'.tool[data-t=auto]',tgt:0,p:()=>[S.stats.plowed,30]},
- {s:'A terra arada fica escura. Passe de novo por cima dela e plante 30 lotes de trigo.',tgt:0,p:()=>[S.stats.seeded,30]},
- {s:'Brotou! Passe mais uma vez para pulverizar: tira as ervas daninhas e rende +25% na colheita.',tgt:0,p:()=>[S.stats.sprayed,20]},
- {s:'Agora é esperar o trigo ficar dourado, menos de um minuto. Quando amadurecer, passe por cima e colha 40 lotes.',tgt:0,p:()=>[S.stats.harvested,40]},
+ {s:'Seu trator está com o ARADO. Passe por cima da terra crua para arar 30 lotes.',hl:'.tool[data-t=plow]',tgt:0,p:()=>[S.stats.plowed,30]},
+ {s:'Terra arada fica escura. Toque em PLANTAR para engatar a plantadeira e semeie 30 lotes de trigo.',hl:'.tool[data-t=seed]',tgt:0,p:()=>[S.stats.seeded,30]},
+ {s:'Brotou! Toque em BORRIFAR e passe o pulverizador: tira as ervas daninhas e rende +25% na colheita.',hl:'.tool[data-t=spray]',tgt:0,p:()=>[S.stats.sprayed,20]},
+ {s:'Quando o trigo ficar dourado (menos de um minuto), toque em COLHER: você troca o trator pela colheitadeira. Colha 40 lotes.',hl:'.tool[data-t=harv]',tgt:0,p:()=>[S.stats.harvested,40]},
  {s:'A colheita foi para o silo. Toque em VENDER, lá em cima, para transformar tudo em dinheiro!',hl:'#bSell',p:()=>[S.stats.sold,1]},
- {s:'Abra a LOJA e compre uma máquina autônoma: ela trabalha sozinha, dia e noite. Se faltar dinheiro, colha e venda mais.',hl:'#bShop',p:()=>[S.machines.length,1]},
- {s:'Pronto, você já é fazendeiro! Compre campos, libere sementes e veja a fazenda crescer. Na dúvida, abra o GUIA 📖.',hl:'#bGuide',next:1}];
+ {s:'Cansou de dirigir? Toque em AJUDANTE: um funcionário assume a sua máquina e faz um serviço de cada vez, enquanto você só gerencia.',hl:'#bPilot',p:()=>[P.used,1]},
+ {s:'Agora abra a LOJA e compre uma máquina autônoma: ela trabalha sozinha, dia e noite. Na aba Equipe você vê e comanda todo mundo.',hl:'#bShop',p:()=>[S.machines.length,1]},
+ {s:'Pronto, você já é fazendeiro e gerente! Compre campos, libere sementes e veja a fazenda crescer. Na dúvida, abra o GUIA 📖.',hl:'#bGuide',next:1}];
 let cStep=-1,cTxt='',cPos=0;
 const clearHL=()=>document.querySelectorAll('.pulse').forEach(e=>e.classList.remove('pulse'));
 function coach(dt){
@@ -665,14 +693,14 @@ const GUIDE=[
   card(turl('raw'),'1 · Terra crua','ARAR')+card(turl('plow'),'2 · Arada','PLANTAR')+card(turl('g01'),'3 · Crescendo','PULVERIZAR')+card(turl('m0'),'4 · Madura','COLHER')+card(turl('stub'),'5 · Palhada','ARAR de novo')+'</div>'+
   '<div class="cyc">'+card(mk(16,16,c=>{c.drawImage(TILES.g02[0],0,0);c.drawImage(TILES.weed[0],0,0)}).toDataURL(),'Erva daninha','colheita ÷ 2')+card(mk(16,16,c=>{c.drawImage(TILES.g02[0],0,0);c.drawImage(TILES.dew[0],0,0);c.drawImage(TILES.dew[1],0,0)}).toDataURL(),'Pulverizada','colheita +25%')+'</div>'+
   '<p class="gp">A <b>erva daninha</b> (tufos roxos) aparece em lotes que ainda não foram pulverizados e corta a colheita daquele lote pela metade. Pulverizar remove a erva e protege o lote até a colheita.</p>'],
- ['Seu trator',()=>'<p class="gp">'+(FINE?'Dirija com <b>WASD</b> ou as <b>setas</b>. Teclas <b>1 a 5</b> trocam a ferramenta.':'<b>Arraste o dedo</b> em qualquer ponto da tela: aparece um controle e o trator segue a direção.')+' A ferramenta trabalha sozinha em tudo o que estiver embaixo dela.</p><div class="cyc">'+
-  card(vthumb(null,'plow'),'Arado','terra crua e palhada',1)+card(vthumb(null,'seed'),'Plantadeira','terra arada',1)+card(vthumb(null,'spray'),'Pulverizador','plantas crescendo',1)+card(vthumb(null,'harv'),'Plataforma','plantas maduras',1)+'</div>'+
-  '<div class="tip"><b>✨ Modo AUTO:</b> o trator troca de ferramenta conforme o chão. É o jeito mais fácil de jogar. Escolha uma ferramenta fixa quando quiser fazer só um serviço.</div>'+
+ ['Seu trator',()=>'<p class="gp">'+(FINE?'Dirija com <b>WASD</b> ou as <b>setas</b>. Teclas <b>1 a 4</b> trocam o equipamento e <b>5</b> chama o ajudante.':'<b>Arraste o dedo</b> em qualquer ponto da tela: aparece um controle e o trator segue a direção.')+' Cada equipamento faz um serviço só, em tudo o que passar por baixo dele. Para colher, o trator dá lugar à colheitadeira.</p><div class="cyc">'+
+  card(vthumb(null,'plow'),'Arado','terra crua e palhada',1)+card(vthumb(null,'seed'),'Plantadeira','terra arada',1)+card(vthumb(null,'spray'),'Pulverizador','plantas crescendo',1)+card(vthumb(null,'harv'),'Colheitadeira','plantas maduras',1)+'</div>'+
+  '<div class="tip"><b>🧑‍🌾 Ajudante:</b> toque em AJUDANTE e um funcionário assume a sua máquina. Ele faz um serviço de cada vez (colher, arar, plantar, pulverizar) e troca de equipamento sozinho. Mexa no controle para voltar a dirigir.</div>'+
   '<p class="gp">A faixa logo acima dos botões mostra o que há embaixo do trator e o que fazer ali. O botão 🔍 afasta a câmera para ver a fazenda inteira.</p>'],
  ['Máquinas autônomas',()=>'<p class="gp">Compradas na <b>Loja</b>, elas procuram serviço em todos os seus campos e trabalham sem parar. Cada uma faz um só serviço.</p><div class="cyc">'+
   Object.keys(MTYPES).map(k=>card(vthumb(k),MTYPES[k].name,'a partir de $'+MTYPES[k].base,1)).join('')+'</div>'+
   '<div class="tip"><b>Uma de cada fecha o ciclo:</b> com as quatro, a fazenda ara, planta, pulveriza e colhe sozinha. Você só vende e reinveste.</div>'+
-  '<p class="gp">Cada máquina a mais do mesmo tipo custa 50% a mais (máximo de 6 por tipo). Quando o serviço acaba, elas voltam para o pátio. Colheitadeiras param se o silo encher.</p>'],
+  '<p class="gp">Cada máquina a mais do mesmo tipo custa 50% a mais (máximo de 6 por tipo). Quando o serviço acaba, elas voltam para o pátio. Colheitadeiras param se o silo encher.</p><div class="tip"><b>👥 Aba Equipe:</b> mostra o que cada máquina está fazendo e deixa você pausar um serviço para todos, por exemplo segurar a colheita até o preço subir.</div>'],
  ['Culturas',()=>'<p class="gp">Libere sementes novas na Loja e escolha o que plantar em cada campo na aba <b>Campos</b>. As mais caras demoram mais, mas rendem muito mais.</p><table class="ct"><tr><th></th><th>Cultura</th><th>Preço normal</th><th>Cresce em</th><th>Licença</th></tr>'+
   CROPS.map(C=>'<tr><td>'+C.ico+'</td><td><b>'+C.name+'</b></td><td>$'+C.price+'</td><td>'+C.time+' s</td><td>'+(C.cost?'$'+fmt(C.cost):'grátis')+'</td></tr>').join('')+'</table>'+
   '<p class="gp">Trocar a cultura de um campo vale para os próximos plantios; o que já está crescendo segue até a colheita.</p>'],
@@ -704,7 +732,7 @@ addEventListener('resize',resize);
 $('#bZoom').onclick=()=>{zi=(zi+1)%3;resize()};
 addEventListener('wheel',e=>{if(document.querySelector('.ovl.show'))return;zi=clamp(zi+(e.deltaY>0?1:-1),0,2);resize()},{passive:true});
 addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=true;
- if(!started)return;const i='12345'.indexOf(k);if(i>=0)setTool(['auto','plow','seed','spray','harv'][i]);
+ if(!started)return;const i='1234'.indexOf(k);if(i>=0)setTool(['plow','seed','spray','harv'][i]);if(k==='5')setPilot(!P.pilot);
  if(k==='l'||k==='e'){$('#shop').classList.contains('show')?$('#shop').classList.remove('show'):openShop()}
  if(k==='Escape'){$('#shop').classList.remove('show');$('#guide').classList.remove('show')}if(k==='g'){$('#guide').classList.contains('show')?$('#guide').classList.remove('show'):openGuide()}if(k==='v')sellAll();if(k==='z'){zi=(zi+1)%3;resize()}
  if(k.startsWith('Arrow')||k===' ')e.preventDefault()});
@@ -756,7 +784,7 @@ function render(dt){
 }
 
 /* ---------- laço principal ---------- */
-let last=0,hudT=0,saveT=0,misT=0;
+let last=0,hudT=0,saveT=0,misT=0,shopT=0;
 function step(dt){
  S.tod+=dt/300;if(S.tod>=1){S.tod-=1;newDay()}if(rain>0)rain-=dt;if(fullWarn>0)fullWarn-=dt;
  grow(dt);if(started)updPlayer(dt);for(const m of M)updMachine(m,dt);
@@ -765,7 +793,7 @@ function step(dt){
  for(let i=floats.length-1;i>=0;i--){floats[i].l-=dt;if(floats[i].l<=0)floats.splice(i,1)}
  if(S.up.auto&&total()>=cap()*.95)sellAll(true);
  misT+=dt;if(misT>.4){misT=0;if(started)checkMission()}
- hudT+=dt;if(hudT>.25){hudT=0;hud()}
+ hudT+=dt;if(hudT>.25){hudT=0;hud();if(++shopT>3){shopT=0;if($('#shop').classList.contains('show')&&(tab==='eq'||tab==='campos'))renderShop()}}
  saveT+=dt;if(saveT>8){saveT=0;if(started)save()}
  music(dt);coach(dt);
 }
