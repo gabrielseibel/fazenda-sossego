@@ -1,10 +1,10 @@
-# GDD — Guia do Jogador (Onboarding e Almanaque)
+# GDD — Guia do Jogador (Onboarding e Almanaque) · Roça & Roll
 
 **Sistema:** Guia do Jogador · **Categoria:** UI / Meta (tutorial) · **Status:** implementado no MVP
 **Lentes aplicadas:** game-designer (principal), ux-designer (fluxo), ui-programmer (viabilidade)
 
 ## 1. Visão geral
-Ensina as mecânicas da Fazenda Sossego sem tirar o jogador do jogo. Tem quatro partes:
+Ensina as mecânicas do Roça & Roll sem tirar o jogador do jogo. Tem quatro partes:
 tutorial guiado pelo Seu Zé, almanaque ilustrado (📖), faixa de contexto do lote e seta de objetivo.
 
 ## 2. Fantasia do jogador
@@ -32,8 +32,8 @@ e nunca fica sem saber o que o chão embaixo do trator está pedindo.
 - "Pular tutorial" encerra na hora; "Rever o tutorial" fica na última página do almanaque.
 - Enquanto o tutorial está ativo, o painel de missões fica oculto (as missões continuam valendo e pagando).
 
-### 3.2 Almanaque (7 páginas)
-Ciclo da lavoura · Seu trator · Máquinas autônomas · Culturas · Silo e mercado · Tempo e clima · Dicas.
+### 3.2 Almanaque (8 páginas)
+Ciclo da lavoura · Seu trator · Máquinas autônomas · Culturas · Silo e mercado · Tempo e clima · A vila e os vizinhos · Dicas.
 Imagens e números vêm dos mesmos dados do jogo (sprites, preços, tempos), então não desatualizam.
 Abre pelo botão 📖 do topo, pela tecla G e por "Como jogar" na tela inicial.
 
