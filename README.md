@@ -16,3 +16,6 @@ Simulador de fazenda cozy em pixel art, visto de cima, para navegador (PC e celu
 Um único arquivo (`index.html`), sem dependências nem build.
 
 Documento de design do guia: `design/gdd/guia-do-jogador.md`.
+
+## Créditos de arte
+Construções, árvores frutíferas, vacas, cerca do pasto e espantalhos: pacote *Farm & Ranch Life 16x16* (embutidos no jogo conforme a licença do pacote; os arquivos originais não fazem parte deste repositório). Tratores, máquinas, carros, plantações e terreno: arte gerada pelo próprio código do jogo.
