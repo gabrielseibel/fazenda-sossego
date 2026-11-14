@@ -300,8 +300,8 @@ function drawWorld(){
 }
 
 /* ---------- objetos do cenário ---------- */
-const BUILD=[{n:'barn',x:528,y:416,w:96,h:80},{n:'silo',x:630,y:416,w:32,h:80},{n:'silo',x:662,y:420,w:32,h:80},{n:'shed',x:500,y:472,w:72,h:56},{n:'house',x:664,y:490,w:64,h:48}];
-const SOLID=[[528,388,624,416],[632,402,694,420],[500,448,572,472],[664,466,728,490]];
+const BUILD=[{n:'barn',x:528,y:416,w:96,h:80},{n:'silo',x:630,y:416,w:32,h:80},{n:'silo',x:662,y:420,w:32,h:80},{n:'shed',x:500,y:506,w:72,h:56},{n:'house',x:664,y:490,w:64,h:48}];
+const SOLID=[[528,388,624,416],[632,402,694,420],[500,482,572,506],[664,466,728,490]];
 const props=[];
 const PINE=[0,1].map(v=>mk(22,36,c=>{const r=rng(31+v*7);for(let y=0;y<30;y++){const t=y/8|0,q=y%8,h=Math.round(2+t*2.1+q*.95);
   for(let x=-h;x<=h;x++){const e=x<-h*.35?'#3f8a5a':x>h*.4?'#1f4a30':'#2c6a44';dot(c,11+x,y+1,q===7?'#173a26':(r()<.12?'#1f4a30':e))}
@@ -468,7 +468,7 @@ function work(v,type,wT){
 /* ---------- máquinas autônomas ---------- */
 function needs(t,i){const s=st[i];return t==='plow'?(s===0||s===4):t==='seed'?s===1:t==='spray'?(s===2&&(!spr[i]||weed[i])):s===3}
 const claims={};
-const park=i=>[508+(i%9)*24,498+(i/9|0)*22];
+const park=i=>[592+(i%3)*22,444+(i/3|0)*18];
 function spawnMachines(){M=S.machines.map((t,i)=>({type:t,x:park(i)[0],y:park(i)[1],a:-Math.PI/2,wps:[],f:-1,scan:Math.random()*1.5,hacc:0,hc:0,full:0,idx:i}))}
 function plan(m){
  let best=-1,bn=3;
