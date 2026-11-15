@@ -33,5 +33,5 @@ Documento de design do guia: `design/gdd/guia-do-jogador.md`.
 - Tratores, máquinas, carros, plantações e terreno: gerados pelo próprio código do jogo.
 - Decoração do mundo (pinheiros, arbustos, pedras, flores, poço, postes, placas, bancos): desenhada como código com [pxl](https://github.com/uilianks/pxl) (MIT). Fonte em `art/deco.px.js`; para regerar: `node <pxl>/bin/pxl.js build art/deco.px.js`.
 - Fazendeiro a pé, Caramelo e Mingau: desenhados com pxl (`art/chars.px.js`).
-- Trilha sonora (uma música por estação e o tema da vila): composta como código com [chirp](https://github.com/uilianks/chirp), fonte em `music/roca.cx.js`, volume nivelado em −20 LUFS com ffmpeg.
+- Trilha sonora lo-fi: 10 faixas cozy (rhodes, violão, flauta, sax, sanfona, bateria boom-bap com swing) que tocam em playlist conforme estação, noite, chuva, vila e mina, sem repetir a anterior. Compostas como código com [chirp](https://github.com/uilianks/chirp) (fonte em `music/lofi.cx.js`), com camada de vinil (chiado, estalos, oscilação de fita) e volume nivelado em −20 LUFS no ffmpeg.
 - Construções, árvores frutíferas, animais, moradores, barracas, cerca do pasto e espantalhos: pacote *Farm & Ranch Life 16x16*, embutidos no jogo conforme a licença do pacote; os arquivos originais não fazem parte deste repositório.
