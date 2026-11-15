@@ -11,6 +11,9 @@ Simulador de fazenda cozy em pixel art, visto de cima, para navegador (PC e celu
 - Ajudantes com turnos de 8 horas e salário diário; máquinas autônomas trabalham 24 horas. Diga de quais terras cada um cuida.
 - 4 estações de 28 dias, culturas por época, qualidade ★ com adubo e irrigação subterrânea por campo.
 - Eventos aleatórios (vaca fugida, corvos, pneu furado, encomendas, ovo dourado, círculo misterioso) e pets (Caramelo e Mingau).
+- Pátio de máquinas com vagas e suporte para os implementos que não estão em uso.
+- Agroindústria: duto pneumático do silo para moinho, prensa, barris e usina de biodiesel; energia de vento, sol e água; desgaste das máquinas com manutenção (óleo + peça forjada); estufas modulares com microclima.
+- Mina com 50 níveis em 5 biomas: minérios, monstros, bombas, sonar, brocas autônomas com torretas e trilhos, fundição contínua, aço de irídio, Forja do Brasa para melhorar ferramentas, e o Vale Etéreo escondido no fundo.
 - 12 campos maiores para comprar e renomear, 5 culturas, mercado com preços diários, melhorias e missões.
 - Vila Pamonha com 8 moradores para fazer amizade (conversa diária, presentes, bônus com 3 corações) e duas fazendas vizinhas que tocam a própria roça.
 - Dia e noite, chuva, estrada com carros, pasto com vacas, galinhas, pássaros.
@@ -18,7 +21,7 @@ Simulador de fazenda cozy em pixel art, visto de cima, para navegador (PC e celu
 - Progresso salvo automaticamente no navegador.
 
 ## Controles
-- **PC:** WASD ou setas para andar/dirigir · 1–4 equipamento · Q desce (a pé) · F ação (falar, entrar, resolver evento) · 5 ajudante · L loja · G guia · V vender · Z zoom
+- **PC:** WASD ou setas para andar/dirigir · 1–4 equipamento · Q desce (a pé) · F ação (falar, entrar, resolver evento) · 5 ajudante · B bomba e N sonar (na mina) · L loja · G guia · V vender · Z zoom
 - **Celular:** arraste o dedo na tela para dirigir
 
 O jogo é o `index.html` mais as músicas da pasta `music/`, sem dependências nem build.
