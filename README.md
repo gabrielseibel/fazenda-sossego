@@ -20,6 +20,10 @@ Simulador de fazenda cozy em pixel art, visto de cima, para navegador (PC e celu
 - Vila Pamonha com 8 moradores para fazer amizade (conversa diária, presentes, bônus com 3 corações) e duas fazendas vizinhas que tocam a própria roça.
 - Dia e noite, chuva, estrada com carros, pasto com vacas, galinhas, pássaros.
 - Tutorial guiado pelo Seu Zé e almanaque ilustrado (📖).
+- ⚙️ Ajustes: volume separado de música e efeitos, modo sem tremor de tela, pausa (P) e lista de atalhos; preferências guardadas à parte do save.
+- Save resistente: dados corrompidos ou editados são validados campo a campo, há cópia de segurança automática e o jogo avisa se o navegador bloquear o armazenamento. Aberto em duas abas, a mais antiga para de salvar para não sobrescrever a outra.
+
+Como tudo roda no navegador, o save fica no seu aparelho e pode ser editado por quem quiser: o jogo não tenta impedir trapaças locais, só garante que um save estranho não quebre a partida.
 - Progresso salvo automaticamente no navegador.
 
 ## Controles
