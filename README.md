@@ -11,7 +11,9 @@ Simulador de fazenda cozy em pixel art, visto de cima, para navegador (PC e celu
 - Ajudantes com turnos de 8 horas e salário diário; máquinas autônomas trabalham 24 horas. Diga de quais terras cada um cuida.
 - 4 estações de 28 dias, culturas por época, qualidade ★ com adubo e irrigação subterrânea por campo.
 - Eventos aleatórios (vaca fugida, corvos, pneu furado, encomendas, ovo dourado, círculo misterioso) e pets (Caramelo e Mingau).
-- Pátio de máquinas com vagas e suporte para os implementos que não estão em uso.
+- Sede ampliada e pátio de máquinas com vagas separadas para a equipe e para as autônomas, mais o suporte dos implementos que não estão em uso.
+- Menus separados: 👥 Equipe (gente, turnos, salários) e 🤖 Autônomas (frota, condição, onde cada uma trabalha).
+- Câmera livre (🎥 ou tecla C) para passear pelo mapa inteiro, com zoom até ver tudo.
 - Agroindústria: duto pneumático do silo para moinho, prensa, barris e usina de biodiesel; energia de vento, sol e água; desgaste das máquinas com manutenção (óleo + peça forjada); estufas modulares com microclima.
 - Mina com 50 níveis em 5 biomas: minérios, monstros, bombas, sonar, brocas autônomas com torretas e trilhos, fundição contínua, aço de irídio, Forja do Brasa para melhorar ferramentas, e o Vale Etéreo escondido no fundo.
 - 12 campos maiores para comprar e renomear, 5 culturas, mercado com preços diários, melhorias e missões.
